@@ -1,0 +1,24 @@
+# permissions for end users to edit metrics.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "x-metrics.fullname" . }}-metric-editor-role
+rules:
+- apiGroups:
+  - metrics.crossplane.io
+  resources:
+  - metrics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - metrics.crossplane.io
+  resources:
+  - metrics/status
+  verbs:
+  - get

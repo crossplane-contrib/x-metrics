@@ -1,0 +1,34 @@
+domain: crossplane.io
+layout:
+- go.kubebuilder.io/v4-alpha
+projectName: x-metrics
+repo: github.com/crossplane-contrib/x-metrics
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: crossplane.io
+  group: metrics
+  kind: ManagedMetrics
+  path: github.com/crossplane-contrib/x-metrics/api/v1
+  version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: crossplane.io
+  group: metrics
+  kind: Metric
+  path: github.com/crossplane-contrib/x-metrics/api/v1
+  version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: crossplane.io
+  group: metrics
+  kind: ClusterMetric
+  path: github.com/crossplane-contrib/x-metrics/api/v1
+  version: v1
+version: "3"

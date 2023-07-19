@@ -1,0 +1,7 @@
+apiVersion: metrics.crossplane.io/v1
+kind: Metric
+metadata:
+  name: metric-sample
+  namespace: crossplane-system
+spec:
+    matchName: "metrics.metrics.crossplane.io"

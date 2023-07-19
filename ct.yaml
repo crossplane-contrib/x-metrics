@@ -1,0 +1,5 @@
+chart-dirs:
+  - deployment/helm/x-metrics
+charts:
+  - deployment/helm/x-metrics
+helm-extra-args: --timeout 600s

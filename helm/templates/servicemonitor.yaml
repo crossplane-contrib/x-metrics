@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  {{- if .Values.serviceMonitor.labels }}
+  labels:
+    {{- range $k, $v :=  .Values.serviceMonitor.labels  }}
+    {{ $k }}: {{ $v }}
+    {{- end }}
+  {{- end }}
+  name: {{ include "x-metrics.fullname" . }}
+spec:
+  namespaceSelector:
+    matchNames:
+    - {{ .Values.namespace }}
+  endpoints:
+  - path: managedmetrics
+    port: metrics
+    scheme: http
+    interval: {{ .Values.serviceMonitor.interval }}
+  selector:
+    matchLabels:
+      app: {{ include "x-metrics.fullname" . }}

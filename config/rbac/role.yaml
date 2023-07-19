@@ -1,0 +1,66 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - metrics.crossplane.io
+  resources:
+  - clustermetrics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - metrics.crossplane.io
+  resources:
+  - clustermetrics/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - metrics.crossplane.io
+  resources:
+  - clustermetrics/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - metrics.crossplane.io
+  resources:
+  - metrics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - metrics.crossplane.io
+  resources:
+  - metrics/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - metrics.crossplane.io
+  resources:
+  - metrics/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - "*"
+  resources:
+  - "*"
+  verbs:
+  - get
+  - list
+  - watch
