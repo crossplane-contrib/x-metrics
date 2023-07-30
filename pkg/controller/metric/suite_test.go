@@ -32,7 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	metricsv1 "github.com/crossplane-contrib/x-metrics/api/v1"
-	mock "github.com/crossplane-contrib/x-metrics/controllers/mock"
+	mock "github.com/crossplane-contrib/x-metrics/pkg/controller/metric/mock"
 	ctrl "sigs.k8s.io/controller-runtime"
 	//+kubebuilder:scaffold:imports
 )

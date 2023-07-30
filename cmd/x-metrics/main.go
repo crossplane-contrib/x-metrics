@@ -35,7 +35,7 @@ import (
 	"k8s.io/client-go/dynamic"
 
 	metricsv1 "github.com/crossplane-contrib/x-metrics/api/v1"
-	"github.com/crossplane-contrib/x-metrics/controllers"
+	controllers "github.com/crossplane-contrib/x-metrics/pkg/controller/metric"
 	xmetrics "github.com/crossplane-contrib/x-metrics/pkg/handler"
 
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
