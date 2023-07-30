@@ -58,7 +58,9 @@ jobs:
         run: make vendor vendor.check
 
       - name: Check Diff
-        run: make check-diff
+        run: |
+          make controller-gen
+          make check-diff
 
   detect-noop:
     runs-on: ubuntu-22.04
