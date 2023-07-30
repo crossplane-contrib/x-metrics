@@ -1,0 +1,5 @@
+# This kustomization can be used to remotely install all Crossplane CRDs
+# by running kubectl apply -k https://github.com/crossplane-contrib/x-metrics//cluster?ref=master
+resources:
+- crds/metrics.crossplane.io_clustermetrics.yaml
+- crds/metrics.crossplane.io_metrics.yaml
