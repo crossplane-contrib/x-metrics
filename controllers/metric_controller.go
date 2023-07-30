@@ -1,5 +1,5 @@
 /*
-Copyright 2023.
+Copyright 2023 The Crossplane Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	metricsv1 "github.com/crossplane-contrib/x-metrics/api/v1"
-	xmetrics "github.com/crossplane-contrib/x-metrics/x-metrics"
+	xmetrics "github.com/crossplane-contrib/x-metrics/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
@@ -72,8 +72,7 @@ const (
 )
 
 var (
-	metricsConfiguration = map[string]*MetricsDefinition{}
-	metricsMemory        = map[string]*MetricsMemory{}
+	metricsMemory = map[string]*MetricsMemory{}
 )
 
 func (r *MetricReconciler) newReconciler() (client.Object, error) {
@@ -122,7 +121,7 @@ func (r *MetricReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	}
 	currentMetrics := getCurrentMetrics(currentConsumerName)
 
-	objectMeta, metricSpec, metricStatus, err := getSpecAndStatus(metric)
+	objectMeta, metricSpec, metricStatus, _ := getSpecAndStatus(metric)
 
 	// Add a finalizer, if the object is not already marked for deletion
 	if objectMeta.DeletionTimestamp.IsZero() {
@@ -208,103 +207,6 @@ func (r *MetricReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 }
 
-// func (r *MetricReconciler) reconcileForObject(ctx context.Context, req *ctrl.Request, cMetric *metricsv1.Metric, namespaced bool, updateFunc func() error, statusUpdateFunc func() error) (ctrl.Result, error) {
-// 	log := log.FromContext(ctx)
-
-// 	var currentConsumerName string
-// 	var currentNamespace string
-// 	if namespaced {
-// 		currentConsumerName = cMetric.GetNamespace() + "::" + cMetric.GetName()
-// 		currentNamespace = cMetric.GetNamespace()
-
-// 	} else {
-// 		currentConsumerName = cMetric.GetName()
-// 	}
-// 	currentMetrics := getCurrentMetrics(currentConsumerName)
-
-// 	// Add a finalizer, if the object is not already marked for deletion
-// 	if cMetric.ObjectMeta.DeletionTimestamp.IsZero() {
-
-// 		if !controllerutil.ContainsFinalizer(cMetric, finalizerName) {
-// 			controllerutil.AddFinalizer(cMetric, finalizerName)
-// 			if err := updateFunc(); err != nil {
-// 				return ctrl.Result{}, nil
-// 			}
-
-// 		}
-// 	} else {
-// 		// If the object is marked for deletion, run the cleanup, if a finaliser is set
-// 		if controllerutil.ContainsFinalizer(cMetric, finalizerName) {
-// 			cleanupMetrics(r.MmHandler, currentMetrics, currentConsumerName)
-// 			controllerutil.RemoveFinalizer(cMetric, finalizerName)
-// 			if err := updateFunc(); err != nil {
-// 				return ctrl.Result{}, nil
-// 			}
-// 			return ctrl.Result{}, nil
-// 		}
-
-// 	}
-
-// 	resourceList, err := r.getGVRForMetric(ctx, cMetric)
-
-// 	addR, _, deleteR := r.getResources(ctx, &currentMetrics, resourceList)
-
-// 	var statusMetrics []metricsv1.WatchedResource
-// 	if cMetric.Status.WatchedResources != nil {
-// 		statusMetrics = *cMetric.Status.WatchedResources
-// 	} else {
-// 		statusMetrics = []metricsv1.WatchedResource{}
-// 	}
-// 	if len(addR) > 0 {
-// 		for _, v := range addR {
-// 			metricName := v.MetricName
-// 			if _, ok := metricsMemory[metricName]; !ok {
-// 				gvr := schema.GroupVersionResource{
-// 					Group:    v.Group,
-// 					Version:  v.Version,
-// 					Resource: v.Resource,
-// 				}
-// 				channel := r.MmHandler.RegisterAndAddMetricStoreForGVR(ctx, metricName, gvr, currentNamespace)
-// 				metricsMemory[metricName] = &MetricsMemory{
-// 					Consumer: map[string]struct{}{
-// 						currentConsumerName: {},
-// 					},
-// 					Channel: &CloseChannel{
-// 						Channel: channel,
-// 						Closed:  false,
-// 					},
-// 				}
-// 			} else {
-// 				metricsMemory[metricName].Consumer[currentConsumerName] = struct{}{}
-// 			}
-
-// 			statusMetrics = append(statusMetrics, metricsv1.WatchedResource{
-// 				Kind:       v.Kind,
-// 				Group:      v.Group,
-// 				Version:    v.Version,
-// 				MetricName: &metricName,
-// 			})
-
-// 		}
-// 	}
-
-// 	if len(deleteR) > 0 {
-// 		cleanupMetrics(r.MmHandler, deleteR, currentConsumerName)
-// 		statusMetrics = filterDeletedMetrics(&statusMetrics, &deleteR)
-// 	}
-// 	if err != nil {
-// 		log.Error(err, "unable to get resources")
-// 	}
-// 	cMetric.Status.WatchedResources = &statusMetrics
-// 	if err := statusUpdateFunc(); err != nil {
-// 		log.Error(err, "unable to update metric status")
-// 	}
-
-// 	duration := time.Minute * 5
-
-// 	return ctrl.Result{RequeueAfter: duration}, nil
-// }
-
 // SetupWithManager sets up the controller with the Manager.
 func (r *MetricReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	reconcilerType, err := r.newReconciler()
@@ -380,7 +282,7 @@ func getCurrentMetrics(cMetricName string) []string {
 
 	currentMetrics := []string{}
 	for metricName, metric := range metricsMemory {
-		for clusertMetricName, _ := range metric.Consumer {
+		for clusertMetricName := range metric.Consumer {
 			if clusertMetricName == cMetricName {
 				currentMetrics = append(currentMetrics, metricName)
 			}
