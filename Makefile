@@ -40,21 +40,10 @@ GOLANGCILINT_VERSION = 1.53.3
 # ====================================================================================
 # Setup Kubernetes tools
 
-USE_HELM3 = true
-HELM3_VERSION = v3.12.2
 KIND_VERSION = v0.20.0
+UP_VERSION = v0.18.0
+UP_CHANNEL = stable
 -include build/makelib/k8s_tools.mk
-
-# ====================================================================================
-# Setup Helm
-
-HELM_BASE_URL = https://charts.crossplane.io
-HELM_S3_BUCKET = crossplane-contrib.charts
-HELM_CHARTS = x-metrics
-HELM_CHART_LINT_ARGS_crossplane = --set nameOverride='',imagePullSecrets=''
-HELM_DOCS_ENABLED = true
-HELM_VALUES_TEMPLATE_SKIPPED = true
--include build/makelib/helm.mk
 
 # ====================================================================================
 # Setup Images
