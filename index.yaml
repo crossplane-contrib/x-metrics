@@ -3,6 +3,18 @@ entries:
   x-metrics:
   - apiVersion: v2
     appVersion: v0.1.0
+    created: "2023-07-31T17:17:39.247534433Z"
+    description: A Helm chart for x-metrics
+    digest: d31df478dc1dbb35b061bf4e6b9fbcf47b70e67ad67ef8a3c81de5dfb06af668
+    maintainers:
+    - name: crossplanecontrib
+    name: x-metrics
+    type: application
+    urls:
+    - https://github.com/crossplane-contrib/x-metrics/releases/download/x-metrics-0.1.1/x-metrics-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: v0.1.0
     created: "2023-07-31T16:14:46.947165936Z"
     description: A Helm chart for x-metrics
     digest: 18718635a195da01daec5f330c0176ebb901025e9d468f9d97cf1c38df62934f
@@ -13,4 +25,4 @@ entries:
     urls:
     - https://github.com/crossplane-contrib/x-metrics/releases/download/x-metrics-0.1.0/x-metrics-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-31T16:14:46.947174036Z"
+generated: "2023-07-31T17:17:39.247551033Z"
