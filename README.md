@@ -2,14 +2,20 @@
 
 based on [Crossplane Intro and Deep Dive - the Cloud Native Control Plane Framework](https://youtu.be/5WRkVUlEgHI?t=1793)
 
-todo:
- - release helm-chart in repo
- - release image in dockerhub
- - add usage information in readme
+
+## Usage
+
+[Helm](https://helm.sh) must be installed to use the charts.
+Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
+
+Once Helm is set up properly, add the repo as follows:
+
+```console
+helm repo add x-metrics https://crossplane-contrib.github.io/x-metrics
+helm install x-metrics x-metrics/x-metrics --namespace x-metrics --create-namespace --wait
+```
 
  ## Licensing
-
-x-metrics is under the Apache 2.0 license.
 
 | Property                       | Function              | Repository  |
 |--------------------------------|-----------------------|-------------|
