@@ -1,9 +1,9 @@
 apiVersion: v2
 name: x-metrics
-description: A Helm chart for Kubernetes
+description: A Helm chart for x-metrics
 type: application
 version: 0.1.0
-appVersion: "0.0.1"
+appVersion: "v0.1.0"
 
 maintainers:
   - name: crossplanecontrib

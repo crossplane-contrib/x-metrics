@@ -1,9 +1,9 @@
 replicaCount: 1
 
 image:
-  repository: crossplanecontrib/x-metrics
+  repository: xpkg.upbound.io/crossplane-contrib/x-metrics
   pullPolicy: IfNotPresent
-  tag: "latest"
+  tag: "v0.1.0"
 
 imagePullSecrets: []
 nameOverride: ""
