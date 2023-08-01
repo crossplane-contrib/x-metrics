@@ -14,11 +14,11 @@ spec:
     matchNames:
     - {{ .Values.namespace }}
   endpoints:
-  - path: managedmetrics
+  - path: x-metrics
     port: metrics
     scheme: http
     interval: {{ .Values.serviceMonitor.interval }}
   selector:
     matchLabels:
-      app: {{ include "x-metrics.fullname" . }}
+      app.kubernetes.io/name: {{ include "x-metrics.fullname" . }}
 {{- end }}
