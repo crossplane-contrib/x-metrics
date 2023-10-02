@@ -16,17 +16,18 @@ helm repo add x-metrics https://crossplane-contrib.github.io/x-metrics
 helm install x-metrics x-metrics/x-metrics --namespace x-metrics --create-namespace --wait
 ```
 
-Access the metrics trough the endpoint. For the default service settings:
+To access the metrics with the default setting trough the endpoint:
+1. Port-forward the services
 ```cosole
 kubect -n x-metrics port-forward svc/x-metrics 8080:8080
 ```
-In your browser navigate to: http://127.0.0.1:8080/x-metrics
+1. In your browser navigate to: http://127.0.0.1:8080/x-metrics
 
-Metrics should be empty. To generate metrics, apply one of the CRDs under the `examples/` folder:
+1. To generate metrics, apply one of the CRDs under the `examples/` folder:
 ```console
 kubectl appy -f examples/iam-metric.yaml
 ```
-Refresh the browser to see the metrics populate.
+1. Refresh the browser to see the metrics populate.
 
 ## Licensing
 
