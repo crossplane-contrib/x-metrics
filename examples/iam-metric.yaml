@@ -1,0 +1,6 @@
+apiVersion: metrics.crossplane.io/v1
+kind: ClusterMetric
+metadata:
+  name: iam-metric-sample
+spec:
+  matchName: ".iam.aws.upbound.io"
