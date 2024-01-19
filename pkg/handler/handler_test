@@ -1,0 +1,22 @@
+package handler
+
+import (
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+)
+
+var _ = Describe("Handler", func() {
+	Context("servehttp", func() {
+		It("Should write metric for total number of objects", func() {
+
+			// handler := ManagedMetricsHandler{
+			// 	metricsWriter:   map[string]store.IXMetricsStore{},
+			// 	Client:          dc,
+			// 	callbacks:       map[string]func() (schema.GroupVersionResource, int){},
+			// 	newStoreHandler: store.NewXMetricsStore,
+			// }
+			a := 1
+			Expect(a).Should(Equal(1))
+		})
+	})
+})

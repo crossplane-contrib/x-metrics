@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -32,9 +33,9 @@ import (
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/kube-state-metrics/v2/pkg/metric"
-	metricsstore "k8s.io/kube-state-metrics/v2/pkg/metrics_store"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
+	store "github.com/crossplane-contrib/x-metrics/pkg/store"
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -46,8 +47,10 @@ type IManagedMetricsHandler interface {
 }
 
 type ManagedMetricsHandler struct {
-	metricsWriter map[string]*metricsstore.MetricsStore
-	Client        dynamic.Interface
+	metricsWriter   map[string]store.IXMetricsStore
+	Client          dynamic.Interface
+	callbacks       map[string]func() (schema.GroupVersionResource, int)
+	newStoreHandler func([]string, func(interface{}) []metric.FamilyInterface, context.Context, dynamic.Interface, string, schema.GroupVersionResource, string) store.IXMetricsStore
 }
 
 type InfoMappings struct {
@@ -63,16 +66,36 @@ type crossplaneStatus struct {
 
 func NewManagedMetricsHandler(dc dynamic.Interface) ManagedMetricsHandler {
 	return ManagedMetricsHandler{
-		metricsWriter: map[string]*metricsstore.MetricsStore{},
-		Client:        dc,
+		metricsWriter:   map[string]store.IXMetricsStore{},
+		Client:          dc,
+		callbacks:       map[string]func() (schema.GroupVersionResource, int){},
+		newStoreHandler: store.NewXMetricsStore,
 	}
 }
 
+func NewManagedMetricsHandlerWithStore(dc dynamic.Interface, storeHandler func([]string, func(interface{}) []metric.FamilyInterface, context.Context, dynamic.Interface, string, schema.GroupVersionResource, string) store.IXMetricsStore) ManagedMetricsHandler {
+	return ManagedMetricsHandler{
+		metricsWriter:   map[string]store.IXMetricsStore{},
+		Client:          dc,
+		callbacks:       map[string]func() (schema.GroupVersionResource, int){},
+		newStoreHandler: storeHandler,
+	}
+}
 func (m *ManagedMetricsHandler) ServeHTTP(writer http.ResponseWriter, r *http.Request) {
 
+	totalCount := 0
+	for _, c := range m.callbacks {
+		_, count := c()
+		totalCount += count
+	}
 	for _, w := range m.metricsWriter {
 		w.WriteAll(writer)
 	}
+
+	writer.Write([]byte("# TYPE x_metric_resources_count_total gauge\n# HELP x_metric_resources_count_total A metric to count all resources\n"))
+	writer.Write([]byte("x_metric_resources_count_total "))
+	writer.Write([]byte(strconv.Itoa(totalCount)))
+	writer.Write([]byte{'\n'})
 
 	if closer, ok := writer.(io.Closer); ok {
 		closer.Close()
@@ -85,15 +108,18 @@ func (m *ManagedMetricsHandler) RegisterAndAddMetricStoreForGVR(ctx context.Cont
 	return channel
 }
 
-func (m *ManagedMetricsHandler) addMetricStore(name string, metricStore *metricsstore.MetricsStore) {
+func (m *ManagedMetricsHandler) addMetricStore(name string, metricStore store.IXMetricsStore) {
 	m.metricsWriter[name] = metricStore
 }
 
 func (m *ManagedMetricsHandler) RemoveMetricStore(name string) {
+	metricsStore := m.metricsWriter[name]
+	callbackUid := metricsStore.GetCallbacUid()
+	delete(m.callbacks, callbackUid)
 	delete(m.metricsWriter, name)
 }
 
-func (m *ManagedMetricsHandler) registerMetricStoreForGVR(ctx context.Context, metricName string, gvr schema.GroupVersionResource, namespace string) (*metricsstore.MetricsStore, chan struct{}) {
+func (m *ManagedMetricsHandler) registerMetricStoreForGVR(ctx context.Context, metricName string, gvr schema.GroupVersionResource, namespace string) (store.IXMetricsStore, chan struct{}) {
 
 	log := log.FromContext(ctx)
 
@@ -124,7 +150,7 @@ func (m *ManagedMetricsHandler) registerMetricStoreForGVR(ctx context.Context, m
 			return []string{obj.GetName(), obj.GetNamespace()}
 		}
 	}
-	reflectorStore := metricsstore.NewMetricsStore(headers, func(objAny any) []metric.FamilyInterface {
+	reflectorStore := m.newStoreHandler(headers, func(objAny any) []metric.FamilyInterface {
 		obj := objAny.(*unstructured.Unstructured)
 		paved := fieldpath.Pave(obj.Object)
 		o := metric.Family{
@@ -244,8 +270,9 @@ func (m *ManagedMetricsHandler) registerMetricStoreForGVR(ctx context.Context, m
 		families = append(families, o_synced_time)
 
 		return families
-	})
-
+	}, ctx, m.Client, namespace, gvr, metricName)
+	callbackUid, countCallBack := reflectorStore.GetCallback()
+	m.callbacks[callbackUid] = countCallBack
 	lw := cache.ListWatch{
 		ListFunc: func(opt metav1.ListOptions) (runtime.Object, error) {
 			o, err := m.Client.Resource(gvr).Namespace(namespace).List(ctx, metav1.ListOptions{})
