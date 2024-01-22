@@ -18,6 +18,7 @@ type XMetricsStoreMock struct {
 	uid       string
 }
 
+// nolint: errcheck
 func (x *XMetricsStoreMock) WriteAll(w io.Writer) {
 	w.Write([]byte(x.WriteData))
 }

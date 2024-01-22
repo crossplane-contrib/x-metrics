@@ -81,6 +81,8 @@ func NewManagedMetricsHandlerWithStore(dc dynamic.Interface, storeHandler func([
 		newStoreHandler: storeHandler,
 	}
 }
+
+// nolint: errcheck
 func (m *ManagedMetricsHandler) ServeHTTP(writer http.ResponseWriter, r *http.Request) {
 
 	totalCount := 0

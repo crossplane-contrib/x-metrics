@@ -113,6 +113,7 @@ func (s *XMetricsStore) WriteAll(w io.Writer) {
 	s.writeCount(w)
 }
 
+// nolint: errcheck
 func (s *XMetricsStore) writeCount(w io.Writer) {
 	metricName := fmt.Sprintf("%s_resource_count", s.metricaName)
 	w.Write([]byte(fmt.Sprintf("# TYPE %[1]s gauge\n# HELP %[1]s A metrics series objects to count objects of %[2]s\n", metricName, s.metricaName)))
