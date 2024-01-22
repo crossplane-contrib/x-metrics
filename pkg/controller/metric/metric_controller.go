@@ -243,13 +243,15 @@ func (r *MetricReconciler) getGVRForMetric(ctx context.Context, metric *metricsv
 			// if we need a gvr for a metrics resource, we only watch namespaced resources
 			if (match || inNameList) && !inExcludeList && (namespaced == inNamespace || !namespaced) {
 				for _, version := range crd.Spec.Versions {
-					metricName := xmetrics.GetValidLabel(crd.Spec.Group + "_" + crd.Spec.Names.Kind + "_" + version.Name)
-					list[metricName] = Resource{
-						Group:      crd.Spec.Group,
-						Version:    version.Name,
-						Resource:   crd.Spec.Names.Plural,
-						Kind:       crd.Spec.Names.Kind,
-						MetricName: metricName,
+					if version.Storage {
+						metricName := xmetrics.GetValidLabel(crd.Spec.Group + "_" + crd.Spec.Names.Kind + "_" + version.Name)
+						list[metricName] = Resource{
+							Group:      crd.Spec.Group,
+							Version:    version.Name,
+							Resource:   crd.Spec.Names.Plural,
+							Kind:       crd.Spec.Names.Kind,
+							MetricName: metricName,
+						}
 					}
 				}
 			}

@@ -3,4 +3,11 @@ kind: ClusterMetric
 metadata:
   name: clustermetric-sample
 spec:
-  matchName: ".crossplane.io"
+  matchName: "objects.kubernetes.crossplane.io"
+---
+apiVersion: metrics.crossplane.io/v1
+kind: ClusterMetric
+metadata:
+  name: clustermetric-sample2
+spec:
+  matchName: "iam.aws.crossplane.io"

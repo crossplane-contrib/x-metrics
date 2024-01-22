@@ -325,7 +325,7 @@ var _ = Describe("Managed Metrics", func() {
 			Expect(k8sClient.Delete(ctx, metric)).Should(Succeed())
 		}, SpecTimeout(time.Second*20))
 
-		It("Should select correct crds for multiple versions", func(ctx SpecContext) {
+		It("Should select correct crd for multiple versions", func(ctx SpecContext) {
 			mm.ResetRegister()
 			metricsMemory = map[string]*MetricsMemory{}
 
@@ -359,7 +359,9 @@ var _ = Describe("Managed Metrics", func() {
 			Eventually(func() int {
 				mmMap = mm.GetRegister()
 				return len(mmMap)
-			}).WithTimeout(time.Second * 20).Should(Equal(4))
+			}).WithTimeout(time.Second * 20).Should(Equal(2))
+			// We expect only two entries as only crd versions with
+			// Storage: true will be watched
 
 			gvr1, ok := mmMap["testb_cloud_NameC_v1"]
 			Expect(ok).Should(BeTrue(), "Should have metrics for NameC v1")
@@ -368,26 +370,12 @@ var _ = Describe("Managed Metrics", func() {
 			Expect(gvr1.Version).Should(Equal("v1"))
 			Expect(gvr1.Resource).Should(Equal("namecs"))
 
-			gvr2, ok := mmMap["testb_cloud_NameC_v1beta1"]
-			Expect(ok).Should(BeTrue(), "Should have metrics for NameC v1beta1")
-
-			Expect(gvr2.Group).Should(Equal("testb.cloud"))
-			Expect(gvr2.Version).Should(Equal("v1beta1"))
-			Expect(gvr2.Resource).Should(Equal("namecs"))
-
-			gvr3, ok := mmMap["testb_cloud_NameD_v2"]
+			gvr2, ok := mmMap["testb_cloud_NameD_v2"]
 			Expect(ok).Should(BeTrue(), "Should have metrics for NameD v2")
 
-			Expect(gvr3.Group).Should(Equal("testb.cloud"))
-			Expect(gvr3.Version).Should(Equal("v2"))
-			Expect(gvr3.Resource).Should(Equal("nameds"))
-
-			gvr4, ok := mmMap["testb_cloud_NameD_v1alpha1"]
-			Expect(ok).Should(BeTrue(), "Should have metrics for NameD v1alpha1")
-
-			Expect(gvr4.Group).Should(Equal("testb.cloud"))
-			Expect(gvr4.Version).Should(Equal("v1alpha1"))
-			Expect(gvr4.Resource).Should(Equal("nameds"))
+			Expect(gvr2.Group).Should(Equal("testb.cloud"))
+			Expect(gvr2.Version).Should(Equal("v2"))
+			Expect(gvr2.Resource).Should(Equal("nameds"))
 
 			Expect(k8sClient.Delete(ctx, metric)).Should(Succeed())
 		}, SpecTimeout(time.Second*20))
@@ -477,7 +465,7 @@ var _ = Describe("Managed Metrics", func() {
 			Eventually(func() int {
 				mmMap = mm.GetRegister()
 				return len(mmMap)
-			}).Should(Equal(4))
+			}).Should(Equal(3))
 
 			gvr1, ok := mmMap["testa_cloud_NameA_v1"]
 			Expect(ok).Should(BeTrue(), "Should have metrics for NameA v1")
@@ -500,13 +488,6 @@ var _ = Describe("Managed Metrics", func() {
 			Expect(gvr3.Version).Should(Equal("v1"))
 			Expect(gvr3.Resource).Should(Equal("namecs"))
 
-			gvr4, ok := mmMap["testb_cloud_NameC_v1beta1"]
-			Expect(ok).Should(BeTrue(), "Should have metrics for NameC v1beta1")
-
-			Expect(gvr4.Group).Should(Equal("testb.cloud"))
-			Expect(gvr4.Version).Should(Equal("v1beta1"))
-			Expect(gvr4.Resource).Should(Equal("namecs"))
-			Expect(k8sClient.Delete(ctx, metric)).Should(Succeed())
 		}, SpecTimeout(time.Second*20))
 
 		It("Should match categories", func(ctx SpecContext) {
@@ -609,6 +590,7 @@ var _ = Describe("Managed Metrics", func() {
 
 			Expect(k8sClient.Delete(ctx, metric)).Should(Succeed())
 		}, SpecTimeout(time.Second*20))
+
 		It("Should match categories OR", func(ctx SpecContext) {
 			mm.ResetRegister()
 			metricsMemory = map[string]*MetricsMemory{}
@@ -649,7 +631,7 @@ var _ = Describe("Managed Metrics", func() {
 			Eventually(func() int {
 				mmMap = mm.GetRegister()
 				return len(mmMap)
-			}).Should(Equal(3))
+			}).Should(Equal(2))
 
 			gvr1, ok := mmMap["testa_cloud_NameA_v1"]
 			Expect(ok).Should(BeTrue(), "Should have metrics for NameA v1")
@@ -664,13 +646,6 @@ var _ = Describe("Managed Metrics", func() {
 			Expect(gvr2.Group).Should(Equal("testb.cloud"))
 			Expect(gvr2.Version).Should(Equal("v1"))
 			Expect(gvr2.Resource).Should(Equal("namecs"))
-
-			gvr3, ok := mmMap["testb_cloud_NameC_v1beta1"]
-			Expect(ok).Should(BeTrue(), "Should have metrics for NameC v1beta1")
-
-			Expect(gvr3.Group).Should(Equal("testb.cloud"))
-			Expect(gvr3.Version).Should(Equal("v1beta1"))
-			Expect(gvr3.Resource).Should(Equal("namecs"))
 
 			Expect(k8sClient.Delete(ctx, metric)).Should(Succeed())
 		}, SpecTimeout(time.Second*20))
@@ -827,7 +802,7 @@ var _ = Describe("Managed Metrics", func() {
 			Eventually(func() int {
 				mmMap = mm.GetRegister()
 				return len(mmMap)
-			}).Should(Equal(3))
+			}).Should(Equal(2))
 
 			gvr1, ok := mmMap["testa_cloud_NameA_v1"]
 			Expect(ok).Should(BeTrue(), "Should have metrics for NameA v1")
@@ -842,13 +817,6 @@ var _ = Describe("Managed Metrics", func() {
 			Expect(gvr2.Group).Should(Equal("testb.cloud"))
 			Expect(gvr2.Version).Should(Equal("v1"))
 			Expect(gvr2.Resource).Should(Equal("namecs"))
-
-			gvr3, ok := mmMap["testb_cloud_NameC_v1beta1"]
-			Expect(ok).Should(BeTrue(), "Should have metrics for NameC v1beta1")
-
-			Expect(gvr3.Group).Should(Equal("testb.cloud"))
-			Expect(gvr3.Version).Should(Equal("v1beta1"))
-			Expect(gvr3.Resource).Should(Equal("namecs"))
 
 			var met metricsv1.Metric
 			metRequest := types.NamespacedName{
@@ -914,7 +882,7 @@ var _ = Describe("Managed Metrics", func() {
 			Eventually(func() int {
 				mmMap = mm.GetRegister()
 				return len(mmMap)
-			}).Should(Equal(3))
+			}).Should(Equal(2))
 
 			gvr1, ok := mmMap["testa_cloud_NameA_v1"]
 			Expect(ok).Should(BeTrue(), "Should have metrics for NameA v1")
@@ -929,13 +897,6 @@ var _ = Describe("Managed Metrics", func() {
 			Expect(gvr2.Group).Should(Equal("testb.cloud"))
 			Expect(gvr2.Version).Should(Equal("v1"))
 			Expect(gvr2.Resource).Should(Equal("namecs"))
-
-			gvr3, ok := mmMap["testb_cloud_NameC_v1beta1"]
-			Expect(ok).Should(BeTrue(), "Should have metrics for NameC v1beta1")
-
-			Expect(gvr3.Group).Should(Equal("testb.cloud"))
-			Expect(gvr3.Version).Should(Equal("v1beta1"))
-			Expect(gvr3.Resource).Should(Equal("namecs"))
 
 			var met metricsv1.Metric
 			metRequest := types.NamespacedName{
@@ -1083,7 +1044,7 @@ var _ = Describe("Managed Metrics", func() {
 			Eventually(func() int {
 				mmMap = mm.GetRegister()
 				return len(mmMap)
-			}).Should(Equal(3))
+			}).Should(Equal(2))
 
 			gvr2, ok := mmMap["testa_cloud_NameA_v1"]
 			Expect(ok).Should(BeTrue(), "Should have metrics for NameA v1")
@@ -1099,13 +1060,6 @@ var _ = Describe("Managed Metrics", func() {
 			Expect(gvr3.Version).Should(Equal("v1"))
 			Expect(gvr3.Resource).Should(Equal("namecs"))
 
-			gvr4, ok := mmMap["testb_cloud_NameC_v1beta1"]
-			Expect(ok).Should(BeTrue(), "Should have metrics for NameC v1beta1")
-
-			Expect(gvr4.Group).Should(Equal("testb.cloud"))
-			Expect(gvr4.Version).Should(Equal("v1beta1"))
-			Expect(gvr4.Resource).Should(Equal("namecs"))
-
 			numCalls := mm.GetNumOfCalls()
 
 			for _, v := range numCalls {
@@ -1115,6 +1069,65 @@ var _ = Describe("Managed Metrics", func() {
 			Expect(k8sClient.Delete(ctx, metric)).Should(Succeed())
 			Expect(k8sClient.Delete(ctx, metric2)).Should(Succeed())
 		}, SpecTimeout(time.Second*20))
+
+		It("Should add count for objects", func() {
+			mm.ResetRegister()
+			metricsMemory = map[string]*MetricsMemory{}
+
+			metricName := "cmetrica"
+			metricNamespace := generateNamespaceName()
+
+			mNamespace := corev1.Namespace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: metricNamespace,
+				},
+			}
+			err2 := k8sClient.Create(ctx, &mNamespace)
+			Expect(err2).NotTo(HaveOccurred(), "failed to create x-metrics namespace")
+			matchName := "testa.cloud"
+			metric := &metricsv1.Metric{
+				TypeMeta: metav1.TypeMeta{
+					APIVersion: "metrics.crossplane.io/v1",
+					Kind:       "ClusterMetric",
+				},
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      metricName,
+					Namespace: metricNamespace,
+				},
+				Spec: metricsv1.MetricSpec{
+					MatchName:    &matchName,
+					IncludeNames: &[]string{"namecs.testb.cloud"},
+				},
+			}
+
+			Expect(k8sClient.Create(ctx, metric)).Should(Succeed())
+			var mmMap map[string]schema.GroupVersionResource
+			Eventually(func() int {
+				mmMap = mm.GetRegister()
+				return len(mmMap)
+			}).Should(Equal(3))
+
+			gvr1, ok := mmMap["testa_cloud_NameA_v1"]
+			Expect(ok).Should(BeTrue(), "Should have metrics for NameA v1")
+
+			Expect(gvr1.Group).Should(Equal("testa.cloud"))
+			Expect(gvr1.Version).Should(Equal("v1"))
+			Expect(gvr1.Resource).Should(Equal("nameas"))
+
+			gvr2, ok := mmMap["testa_cloud_NameB_v1beta1"]
+			Expect(ok).Should(BeTrue(), "Should have metrics for NameB v1beta1")
+
+			Expect(gvr2.Group).Should(Equal("testa.cloud"))
+			Expect(gvr2.Version).Should(Equal("v1beta1"))
+			Expect(gvr2.Resource).Should(Equal("namebs"))
+
+			gvr3, ok := mmMap["testb_cloud_NameC_v1"]
+			Expect(ok).Should(BeTrue(), "Should have metrics for NameC v1")
+
+			Expect(gvr3.Group).Should(Equal("testb.cloud"))
+			Expect(gvr3.Version).Should(Equal("v1"))
+			Expect(gvr3.Resource).Should(Equal("namecs"))
+		})
 
 		It("Should delete crds correctly", func() {
 			ctx := context.Background()
