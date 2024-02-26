@@ -19,7 +19,7 @@ serviceMonitor:
   labels: {}
   interval: 60s
 
-namespace: x-metrics
+namespace: ""
 
 podAnnotations: {}
 
