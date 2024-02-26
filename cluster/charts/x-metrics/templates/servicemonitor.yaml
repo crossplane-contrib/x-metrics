@@ -12,7 +12,7 @@ metadata:
 spec:
   namespaceSelector:
     matchNames:
-    - {{ .Values.namespace }}
+    - {{ include "x-metrics.namespace" . }}
   endpoints:
   - path: x-metrics
     port: metrics

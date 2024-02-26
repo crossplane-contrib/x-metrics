@@ -9,4 +9,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "x-metrics.serviceAccountName" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "x-metrics.namespace" . }}
