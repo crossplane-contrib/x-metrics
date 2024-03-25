@@ -51,9 +51,10 @@ func (s *XMetricsStore) init(ctx context.Context, client dynamic.Interface, name
 	log := log.FromContext(ctx)
 	o, err := client.Resource(gvr).Namespace(namespace).List(ctx, metav1.ListOptions{})
 	if err != nil {
-		log.Info("err listing")
+		log.Error(err, "err listing")
+	} else {
+		s.counter = len(o.Items)
 	}
-	s.counter = len(o.Items)
 }
 
 func (s *XMetricsStore) Add(obj interface{}) error {
