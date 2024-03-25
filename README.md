@@ -21,7 +21,7 @@ helm install x-metrics x-metrics/x-metrics --namespace x-metrics --create-namesp
 To access the metrics with the default setting trough the endpoint:
 1. Port-forward the services
 ```console
-kubect -n x-metrics port-forward svc/x-metrics 8080:8080
+kubectl -n x-metrics port-forward svc/x-metrics 8080:8080
 ```
 2. In your browser navigate to: http://127.0.0.1:8080/x-metrics
 
