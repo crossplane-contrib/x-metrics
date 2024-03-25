@@ -60,3 +60,10 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Target namespace
+*/}}
+{{- define "x-metrics.namespace" -}}
+{{- default .Values.namespace .Release.Namespace }}
+{{- end }}

@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ include "x-metrics.fullname" . }}-leader-election
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "x-metrics.namespace" . }}
 rules:
 - apiGroups:
   - ""

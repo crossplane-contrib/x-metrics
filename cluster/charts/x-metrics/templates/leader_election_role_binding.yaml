@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ include "x-metrics.fullname" . }}-leader-election
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "x-metrics.namespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -10,4 +10,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "x-metrics.serviceAccountName" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "x-metrics.namespace" . }}
