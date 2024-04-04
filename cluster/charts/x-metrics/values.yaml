@@ -33,6 +33,17 @@ service:
 
 ingress:
   enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: x-metrics.local
+      paths:
+        - path: /metrics
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: example-tls
+  #    hosts:
+  #      - x-metrics.local
 
 resources:
   limits:
